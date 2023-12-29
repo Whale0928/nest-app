@@ -3,6 +3,7 @@ import { Board } from './boards.model';
 import { v1 as uuid } from 'uuid';
 import { BoardStatus } from './boards.BoardStatus';
 import { CreateBoardDto } from './dto/create-board.dto';
+import { UpdateBoardDto } from './dto/update-board.dto';
 
 @Injectable()
 export class BoardsService {
@@ -31,7 +32,26 @@ export class BoardsService {
     return board;
   }
 
-  //todo: id로 특정 게시물 조회
-  //todo: id로 특정 게시물 삭제
-  //todo: id로 특정 게시물의 제목과 내용 수정
+  findBoardById(id: string): Board {
+    return this.boards.find((board) => board.id == id);
+  }
+
+  deleteBoardById(id: string): Board {
+    const board = this.findBoardById(id);
+    this.boards = this.boards.filter((board) => board.id != id);
+    return board;
+  }
+
+  updateBoardById(updateDto: UpdateBoardDto): Board {
+    const board = this.findBoardById(updateDto.id);
+    board.title = updateDto.title;
+    board.description = updateDto.description;
+    return board;
+  }
+
+  updateBoardStatusById(id: string, status: BoardStatus): boolean {
+    const board = this.findBoardById(id);
+    board.status = status;
+    return true;
+  }
 }
