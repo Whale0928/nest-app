@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Board } from './boards.model';
 import { v1 as uuid } from 'uuid';
 import { BoardStatus } from './boards.BoardStatus';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
+import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class BoardsService {
@@ -33,11 +34,18 @@ export class BoardsService {
   }
 
   findBoardById(id: string): Board {
-    return this.boards.find((board) => board.id == id);
+    const board = this.boards.find((board) => board.id == id);
+    if (!board) {
+      throw new NotFoundException(`Can't find Board id ${id}`);
+    }
+    return board;
   }
 
   deleteBoardById(id: string): Board {
     const board = this.findBoardById(id);
+    if (!board) {
+      throw new NotFoundException(`Can't find Board id ${id}`);
+    }
     this.boards = this.boards.filter((board) => board.id != id);
     return board;
   }
