@@ -33,12 +33,14 @@ export class BoardsController {
   }
 
   @Get('/:id')
-  findBoardById(id: string): Board {
+  findBoardById(@Param('id') id: string): Board {
+    console.log('findBoardById', id);
     return this.boardsService.findBoardById(id);
   }
 
   @Delete('/:id')
-  deleteBoardById(id: string): Board {
+  deleteBoardById(@Param('id') id: string): Board {
+    console.log('deleteBoardById', id);
     return this.boardsService.deleteBoardById(id);
   }
 
@@ -50,7 +52,7 @@ export class BoardsController {
   @Patch('/update/:id')
   updateBoardStatusById(
     @Param('id') id: string,
-    @Body('status') status: BoardStatus
+    @Body('status') status: BoardStatus,
   ): boolean {
     return this.boardsService.updateBoardStatusById(id, status);
   }
