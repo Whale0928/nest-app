@@ -1,17 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { Board } from './boards.model';
-import { v1 as uuid } from 'uuid';
-import { BoardStatus } from './boards.BoardStatus';
-import { CreateBoardDto } from './dto/create-board.dto';
-import { UpdateBoardDto } from './dto/update-board.dto';
-import { NotFoundError } from 'rxjs';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class BoardsService {
-  private boards: Board[] = []; // Board타입의 배열을 선언하고 초기화
-  //list 생성
-  private list: string[] = [];
-
+  /*
   getAllBoards(): Board[] {
     // :Board[]는 리턴값의 타입을 지정해주는 것 : 반환객체는 Board타입의 배열이라는 뜻
     return this.boards;
@@ -61,5 +52,5 @@ export class BoardsService {
     const board = this.findBoardById(id);
     board.status = status;
     return true;
-  }
+  } */
 }
