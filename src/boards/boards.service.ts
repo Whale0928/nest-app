@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import { Board } from './board.entity';
 
 @Injectable()
 export class BoardsService {
-  /*
-  getAllBoards(): Board[] {
-    // :Board[]는 리턴값의 타입을 지정해주는 것 : 반환객체는 Board타입의 배열이라는 뜻
-    return this.boards;
+  getAllBoards(): Board {
+    return null;
   }
+
+  /*
 
   getAllIds(): string[] {
     return this.boards.map((board) => board.id);
