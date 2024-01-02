@@ -1,10 +1,31 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Board } from './board.entity';
+import { BoardRepository } from './board.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CreateBoardDto } from './dto/create-board.dto';
+import { BoardStatus } from './boards.board-status';
 
 @Injectable()
 export class BoardsService {
-  getAllBoards(): Board {
+  constructor(
+    @InjectRepository(Board)
+    private boardRepository: BoardRepository,
+  ) {}
+
+  getAllBoards(): Promise<Board>[] {
     return null;
+  }
+
+  async findBoardById(id: number): Promise<Board> {
+    const board = await this.boardRepository.findOne(id);
+    if (!board) {
+      throw new NotFoundException(`존재하지 않는 아이디입니다. :  ${id}`);
+    }
+    return board;
+  }
+
+  async createBoard(createBoardDto: CreateBoardDto): Promise<Board> {
+    return this.boardRepository.save(createBoardDto);
   }
 
   /*
@@ -13,25 +34,6 @@ export class BoardsService {
     return this.boards.map((board) => board.id);
   }
 
-  createBoard(createBoardDto: CreateBoardDto): Board {
-    const { title, description } = createBoardDto; //비구조화 할당
-    const board: Board = {
-      id: uuid(),
-      title, //title: title, 과 같은 의미 필드와 변수명 같을때 생략 가능
-      description,
-      status: BoardStatus.PUBLIC,
-    };
-    this.boards.push(board);
-    return board;
-  }
-
-  findBoardById(id: string): Board {
-    const board = this.boards.find((board) => board.id == id);
-    if (!board) {
-      throw new NotFoundException(`Can't find Board id ${id}`);
-    }
-    return board;
-  }
 
   deleteBoardById(id: string): Board {
     const board = this.findBoardById(id);

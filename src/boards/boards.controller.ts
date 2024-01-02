@@ -1,6 +1,7 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { Board } from './board.entity';
+import { CreateBoardDto } from './dto/create-board.dto';
 
 @Controller('boards')
 export class BoardsController {
@@ -9,8 +10,22 @@ export class BoardsController {
   } //접근제어자 선언시 암묵적으로 클래스 프로퍼티로 선언됨
 
   @Get()
-  getAllBoards(): Board {
+  getAllBoards(): Promise<Board>[] {
     return this.boardsService.getAllBoards();
+  }
+
+  @Get('/:id')
+  @UsePipes(ValidationPipe)
+  findBoardById(@Param('id') id: number): Promise<Board> {
+    console.log('findBoardById : ', id);
+    return this.boardsService.findBoardById(id);
+  }
+
+
+  @Post()
+  @UsePipes(ValidationPipe)
+  createBoard(@Body() createBoardDto: CreateBoardDto): Promise<Board> {
+    return this.boardsService.createBoard(createBoardDto);
   }
 
   /*
@@ -18,18 +33,6 @@ export class BoardsController {
   @Get('/ids')
   getAllIds(): string[] {
     return this.boardsService.getAllIds();
-  }
-
-  @Post()
-  @UsePipes(ValidationPipe)
-  createBoard(@Body() createBoardDto: CreateBoardDto): Board {
-    return this.boardsService.createBoard(createBoardDto);
-  }
-
-  @Get('/:id')
-  findBoardById(@Param('id') id: string): Board {
-    console.log('findBoardById', id);
-    return this.boardsService.findBoardById(id);
   }
 
   @Delete('/:id')
