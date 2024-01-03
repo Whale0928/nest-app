@@ -1,16 +1,24 @@
-import { Body, Controller, Get, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { Board } from './board.entity';
 import { CreateBoardDto } from './dto/create-board.dto';
 
 @Controller('boards')
 export class BoardsController {
-  constructor(private boardsService: BoardsService) {
-
-  } //접근제어자 선언시 암묵적으로 클래스 프로퍼티로 선언됨
+  constructor(private boardsService: BoardsService) {} //접근제어자 선언시 암묵적으로 클래스 프로퍼티로 선언됨
 
   @Get()
-  getAllBoards(): Promise<Board>[] {
+  getAllBoards(): Promise<Board[]> {
     return this.boardsService.getAllBoards();
   }
 
@@ -21,11 +29,15 @@ export class BoardsController {
     return this.boardsService.findBoardById(id);
   }
 
-
   @Post()
   @UsePipes(ValidationPipe)
   createBoard(@Body() createBoardDto: CreateBoardDto): Promise<Board> {
     return this.boardsService.createBoard(createBoardDto);
+  }
+
+  @Delete('/:id')
+  deleteBoardById(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.boardsService.deleteBoardById(id);
   }
 
   /*
@@ -35,11 +47,6 @@ export class BoardsController {
     return this.boardsService.getAllIds();
   }
 
-  @Delete('/:id')
-  deleteBoardById(@Param('id') id: string): Board {
-    console.log('deleteBoardById', id);
-    return this.boardsService.deleteBoardById(id);
-  }
 
   @Post('/update')
   updateBoardById(@Body() updateBoard: UpdateBoardDto): Board {

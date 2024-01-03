@@ -1,9 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Provider } from '@nestjs/common';
 import { Board } from './board.entity';
 import { BoardRepository } from './board.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateBoardDto } from './dto/create-board.dto';
-import { BoardStatus } from './boards.board-status';
+import { DeleteResult } from 'typeorm';
 
 @Injectable()
 export class BoardsService {
@@ -12,37 +12,33 @@ export class BoardsService {
     private boardRepository: BoardRepository,
   ) {}
 
-  getAllBoards(): Promise<Board>[] {
-    return null;
+  getAllBoards(): Promise<Board[]> {
+    console.log('getAllBoards');
+    return this.boardRepository.find();
   }
 
   async findBoardById(id: number): Promise<Board> {
-    const board = await this.boardRepository.findOne(id);
+    const board = await this.boardRepository.findOneBy({ id: id });
     if (!board) {
       throw new NotFoundException(`존재하지 않는 아이디입니다. :  ${id}`);
     }
     return board;
   }
 
-  async createBoard(createBoardDto: CreateBoardDto): Promise<Board> {
+  createBoard(createBoardDto: CreateBoardDto): Promise<Board> {
     return this.boardRepository.save(createBoardDto);
+  }
+
+  async deleteBoardById(id: number): Promise<void> {
+    const result = await this.boardRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`존재하지 않는 아이디입니다. :  ${id}`);
+    }
+    console.log('deleteBoardById', result);
   }
 
   /*
 
-  getAllIds(): string[] {
-    return this.boards.map((board) => board.id);
-  }
-
-
-  deleteBoardById(id: string): Board {
-    const board = this.findBoardById(id);
-    if (!board) {
-      throw new NotFoundException(`Can't find Board id ${id}`);
-    }
-    this.boards = this.boards.filter((board) => board.id != id);
-    return board;
-  }
 
   updateBoardById(updateDto: UpdateBoardDto): Board {
     const board = this.findBoardById(updateDto.id);
